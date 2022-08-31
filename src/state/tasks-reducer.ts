@@ -7,7 +7,7 @@ import {
 import {TasksStateType} from '../App';
 import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI} from "../api/todoapi";
 import {Dispatch} from "redux";
-import {AppActionsType, AppRootStateType} from "./store";
+import {AppActionsType, AppRootStateType, AppThunk} from "./store";
 
 export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>
 export type AddTaskActionType = ReturnType<typeof addTaskAC>
@@ -103,24 +103,24 @@ export const updateTaskAC = (todolistId: string, taskId: string, task: TaskType)
 
 
 // thank
-export const fetchTaskTC = (todolistId: string) => {
-    return (dispatch: Dispatch<AppActionsType>) => {
+export const fetchTaskTC = (todolistId: string): AppThunk => {
+    return (dispatch) => {
         todolistsAPI.getTasks(todolistId)
             .then((res) => {
                 dispatch(setTaskAC(todolistId, res.data.items))
             })
     }
 }
-export const deleteTaskTC = (todolistId: string, taskId: string) => {
-    return (dispatch: Dispatch<AppActionsType>) => {
+export const deleteTaskTC = (todolistId: string, taskId: string): AppThunk => {
+    return (dispatch) => {
         todolistsAPI.deleteTask(todolistId, taskId)
             .then((res) => {
                 dispatch(removeTaskAC(taskId, todolistId))
             })
     }
 }
-export const addTaskTC = (title: string, todolistId: string) => {
-    return (dispatch: Dispatch<AppActionsType>) => {
+export const addTaskTC = (title: string, todolistId: string): AppThunk => {
+    return (dispatch) => {
         todolistsAPI.createTask(todolistId, title)
             .then((res) => {
                 console.log(res)
@@ -128,8 +128,8 @@ export const addTaskTC = (title: string, todolistId: string) => {
             })
     }
 }
-export const updateTaskTC = (todolistId: string, taskId: string, model: UpdateTaskModelType) => {
-    return (dispatch: Dispatch<AppActionsType>, getState: () => AppRootStateType) => {
+export const updateTaskTC = (todolistId: string, taskId: string, model: UpdateTaskModelType): AppThunk => {
+    return (dispatch, getState: () => AppRootStateType) => {
         const task = getState().tasks[todolistId].find(el => el.id === taskId)
         if (task) {
             todolistsAPI.updateTask(todolistId, taskId, {
