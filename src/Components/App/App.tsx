@@ -9,6 +9,11 @@ import Container from '@mui/material/Container';
 import {Menu} from '@mui/icons-material';
 import {TaskType} from "../../api/todoapi";
 import {Todolists} from "../features/TodolistsList/TodolistsList";
+import {LinearProgress} from "@mui/material";
+import CustomizedSnackbars from "../ErrorSnackbar/ErrorSnackbar";
+import {useSelector} from "react-redux";
+import {AppRootStateType} from "../../state/store";
+import {StatusType} from "./app-reducer";
 
 export type TasksStateType = {
     [key: string]: Array<TaskType>
@@ -16,8 +21,11 @@ export type TasksStateType = {
 
 function App() {
 
+    const status = useSelector<AppRootStateType, StatusType>( state => state.app.status )
+    console.log(status)
     return (
         <div className="App">
+            <CustomizedSnackbars />
             <AppBar position="static">
                 <Toolbar>
                     <IconButton edge="start" color="inherit" aria-label="menu">
@@ -29,6 +37,7 @@ function App() {
                     <Button color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
+            {status === 'loading' && <LinearProgress color="inherit" />}
             <Container fixed>
                 <Todolists />
             </Container>
