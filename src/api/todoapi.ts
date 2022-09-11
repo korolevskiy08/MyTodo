@@ -39,7 +39,28 @@ export const todolistsAPI = {
     }
 }
 
+export const authAPI = {
+    login(data:LoginParamsType) {
+        return instance.post('/auth/login', data)
+    },
+    logout(){
+      return instance.delete('/auth/login')
+    },
+    me(){
+        return instance.get('/auth/me')
+    }
+}
+
+
 // Types
+
+export type LoginParamsType = {
+    email: string
+    password: string
+    rememberMe: boolean
+    captcha?: string
+}
+
 export type TodolistType = {
     id: string
     title: string
