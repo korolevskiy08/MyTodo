@@ -6,14 +6,14 @@ import {ResponceType} from './../api/todoapi'
 // generic function
 export const handleServerAppError = <T>(data: ResponceType<T>, dispatch: Dispatch<AppActionsType>) => {
     if (data.messages.length) {
-        dispatch(setError(data.messages[0]))
+        dispatch(setError({error: data.messages[0]}))
     } else {
-        dispatch(setError('Some error occurred'))
+        dispatch(setError({error: 'Some error occurred'}))
     }
-    dispatch(setStatus('failed'))
+    dispatch(setStatus({status: 'failed'}))
 }
 
 export const handleServerNetworkError = (error: {message: string}, dispatch: Dispatch<AppActionsType>) => {
-    dispatch(setError(error.message))
-    dispatch(setStatus('failed'))
+    dispatch(setError({error: error.message}))
+    dispatch(setStatus({status: 'failed'}))
 }

@@ -3,31 +3,32 @@ import {AppThunk} from "../../state/store";
 import {authAPI, LoginParamsType} from "../../api/todoapi";
 import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
 import axios from "axios";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 const initialState = {
     isLoggedIn: false
 }
-type InitialStateType = typeof initialState
 
-export const authReducer = (state: InitialStateType = initialState, action: ActionsAuthType): InitialStateType => {
-    switch (action.type) {
-        case 'login/SET-IS-LOGGED-IN':
-            return {...state, isLoggedIn: action.value}
-        default:
-            return state
+const slice = createSlice({
+    name: 'auth',
+    initialState: initialState,
+    reducers: {
+        setIsLoggedInAC(state, action: PayloadAction<{value: boolean}>) {
+            state.isLoggedIn = action.payload.value
+        }
     }
-}
+})
 
-// actions
-export const setIsLoggedInAC = (value: boolean) =>
-    ({type: 'login/SET-IS-LOGGED-IN', value} as const)
+
+export const authReducer = slice.reducer
+export const {setIsLoggedInAC} = slice.actions
 
 // thunks
 export const loginTC = (data: LoginParamsType):AppThunk => async (dispatch) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatus({status: 'loading'}))
     try {
         const res = await authAPI.login(data)
-        dispatch(setIsLoggedInAC(true))
+        dispatch(setIsLoggedInAC({value: true}))
         if(res.data.resultCode !== 0){
             handleServerAppError(res.data, dispatch)
         }
@@ -38,12 +39,12 @@ export const loginTC = (data: LoginParamsType):AppThunk => async (dispatch) => {
 }
 
 export const logoutTC = ():AppThunk => async (dispatch) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatus({status: 'loading'}))
     try {
         const res = await authAPI.logout()
         if(res.data.resultCode === 0) {
-            dispatch(setIsLoggedInAC(false))
-            dispatch(setStatus('succeeded'))
+            dispatch(setIsLoggedInAC({value: false}))
+            dispatch(setStatus({status: 'succeeded'}))
         } else {
             handleServerAppError(res.data, dispatch)
         }

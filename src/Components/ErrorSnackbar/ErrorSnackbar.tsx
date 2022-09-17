@@ -21,7 +21,7 @@ export default function CustomizedSnackbars() {
         if (reason === 'clickaway') {
             return;
         }
-        dispatch(setError(null))
+        dispatch(setError({error: null}))
     };
 
     const isOpen = error !== null

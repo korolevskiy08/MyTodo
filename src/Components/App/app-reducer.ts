@@ -3,32 +3,49 @@ import {authAPI} from "../../api/todoapi";
 import {setIsLoggedInAC} from "../Login/authReducer";
 import axios from "axios";
 import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 export type StatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 
-
-type AppInitialStateType = {
-    status: StatusType
-    error: string | null
-    isInitialized: boolean
-}
-
-const initialState: AppInitialStateType = {
-    status: 'idle',
-    error: null,
+const initialState = {
+    status: 'idle' as StatusType,
+    error: null as string | null,
     isInitialized: false
 }
 
-export const appReducer = (state: AppInitialStateType = initialState, action: AppActionType): AppInitialStateType => {
-    switch (action.type) {
-        case 'APP/SET-STATUS' :
-            return {...state, status: action.status}
-        case 'APP/SET-ERROR' :
-            return {...state, error: action.error}
-        case 'APP/SET-initialized':
-            return {...state, isInitialized: action.isInitializedValue}
-        default:
-            return {...state}
+const slice = createSlice({
+    name: 'app',
+    initialState,
+    reducers: {
+        setStatus(state, action: PayloadAction<{status: StatusType}>){
+            state.status = action.payload.status
+        },
+        setError(state, action: PayloadAction<{error: string | null}>){
+            state.error = action.payload.error
+        },
+        setIsInitialized(state, action: PayloadAction<{isInitializedValue: boolean}>){
+            state.isInitialized = action.payload.isInitializedValue
+        }
+    }
+})
+
+export const appReducer = slice.reducer
+
+export const {setError, setStatus, setIsInitialized} = slice.actions
+
+export const initializeAppTC = (): AppThunk => async dispatch => {
+    dispatch(setIsInitialized({isInitializedValue: false}))
+    try {
+        const res = await authAPI.me()
+        dispatch(setIsLoggedInAC({value: true}))
+        if (res.data.resultCode !== 0) {
+            handleServerAppError(res.data, dispatch)
+        }
+    } catch (e) {
+        if (axios.isAxiosError(e))
+            handleServerNetworkError(e, dispatch)
+    } finally {
+        dispatch(setIsInitialized({isInitializedValue: true}))
     }
 }
 
@@ -42,22 +59,3 @@ export type AppActionType =
     | SetIsInitializedActionType
 
 
-export const setStatus = (status: StatusType) => ({type: 'APP/SET-STATUS', status} as const)
-export const setError = (error: string | null) => ({type: 'APP/SET-ERROR', error} as const)
-export const setIsInitialized = (isInitializedValue: boolean) => ({type: 'APP/SET-initialized', isInitializedValue}as const)
-
-export const initializeAppTC = (): AppThunk => async (dispatch) => {
-    dispatch(setIsInitialized(false))
-    try {
-        const res = await authAPI.me()
-        dispatch(setIsLoggedInAC(true))
-        if (res.data.resultCode !== 0) {
-            handleServerAppError(res.data, dispatch)
-        }
-    } catch (e) {
-        if (axios.isAxiosError(e))
-            handleServerNetworkError(e, dispatch)
-    } finally {
-        dispatch(setIsInitialized(true))
-    }
-}
