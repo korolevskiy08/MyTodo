@@ -1,7 +1,7 @@
 import {TasksStateType} from '../Components/App/App';
 import {TaskPriorities, TaskStatuses, todolistsAPI} from "../api/todoapi";
 import {AppRootStateType} from "./store";
-import {addTodolistAC, removeTodolistAC, setTodolistAC} from "./todolists-reducer";
+import {addTodolistTC, fetchTodolistsTC, removeTodolistTC} from "./todolists-reducer";
 import {setError, SetErrorActionType, setStatus} from "../Components/App/app-reducer";
 import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
@@ -45,14 +45,14 @@ export const updateTaskTC = createAsyncThunk('tasks/updateTask', async (params: 
     }
 })
 
-export const fetchTaskTC = createAsyncThunk('tasks/deleteTask', async (todolistId: string, thunkAPI) => {
+export const fetchTaskTC = createAsyncThunk('tasks/fetchTask', async (todolistId: string, thunkAPI) => {
     thunkAPI.dispatch(setStatus({status: 'loading'}))
     const res = await todolistsAPI.getTasks(todolistId)
     thunkAPI.dispatch(setStatus({status: 'succeeded'}))
     return {todolistId, tasks: res.data.items}
 })
 
-export const deleteTaskTC = createAsyncThunk('tasks/fetchTasks', async (param: { todolistId: string, taskId: string }, thunkAPI) => {
+export const deleteTaskTC = createAsyncThunk('tasks/deleteTask', async (param: { todolistId: string, taskId: string }, thunkAPI) => {
     thunkAPI.dispatch(setStatus({status: 'loading'}))
     await todolistsAPI.deleteTask(param.todolistId, param.taskId)
     thunkAPI.dispatch(setStatus({status: 'succeeded'}))
@@ -88,13 +88,13 @@ const slice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(addTodolistAC, (state, action) => {
+        builder.addCase(addTodolistTC.fulfilled, (state, action) => {
             state[action.payload.todolist.id] = []
         })
-        builder.addCase(removeTodolistAC, (state, action) => {
+        builder.addCase(removeTodolistTC.fulfilled, (state, action) => {
             delete state[action.payload.id]
         })
-        builder.addCase(setTodolistAC, (state, action) => {
+        builder.addCase(fetchTodolistsTC.fulfilled, (state, action) => {
             action.payload.todolist.forEach(td => {
                 state[td.id] = []
             })
@@ -133,9 +133,6 @@ export type UpdateTaskModelType = {
 }
 
 export type TasksActionsType =
-    | ReturnType<typeof addTodolistAC>
-    | ReturnType<typeof removeTodolistAC>
-    | ReturnType<typeof setTodolistAC>
     | SetErrorActionType
 
 

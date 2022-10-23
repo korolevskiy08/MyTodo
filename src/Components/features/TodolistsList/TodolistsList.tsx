@@ -2,8 +2,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../../state/store";
 import {
     addTodolistTC,
-    changeTodolistFilterAC,
-    fetchTodolistTC,
+    changeTodolistFilterAC, fetchTodolistsTC,
+
     FilterValuesType,
     removeTodolistTC,
     TodolistDomainType,
@@ -54,14 +54,14 @@ export const Todolists = () => {
         dispatch(removeTodolistTC(id))
     }, []);
     const changeTodolistTitle = useCallback(function (id: string, title: string) {
-        dispatch(updateTodolist(id, title))
+        dispatch(updateTodolist({todolistId: id, title}))
     }, []);
     const addTodolist = useCallback((title: string) => {
         dispatch(addTodolistTC(title))
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(fetchTodolistTC())
+        dispatch(fetchTodolistsTC())
     }, [])
 
     if (!isLoggedIn) {
