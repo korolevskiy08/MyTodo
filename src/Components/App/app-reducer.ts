@@ -37,7 +37,7 @@ export const initializeAppTC = (): AppThunk => async dispatch => {
     dispatch(setIsInitialized({isInitializedValue: false}))
     try {
         const res = await authAPI.me()
-        dispatch(setIsLoggedInAC({value: true}))
+        dispatch(setIsLoggedInAC({value: false}))
         if (res.data.resultCode !== 0) {
             handleServerAppError(res.data, dispatch)
         }

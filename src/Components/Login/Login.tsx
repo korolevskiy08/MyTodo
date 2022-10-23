@@ -44,8 +44,8 @@ export const Login = () => {
             }
             return errors
         },
-        onSubmit: values => {
-            dispatch(loginTC(values))
+        onSubmit: (values) => {
+           dispatch(loginTC(values))
         },
     });
 

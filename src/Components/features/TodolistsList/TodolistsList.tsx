@@ -17,15 +17,14 @@ import {AddItemForm} from "../../AddItemForm/AddItemForm";
 import Paper from "@mui/material/Paper";
 import {Todolist} from "./Todolist/Todolist";
 import {TasksStateType} from "../../App/App";
-import {useNavigate} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 
 export const Todolists = () => {
 
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
     const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
     const isLoggedIn = useSelector<AppRootStateType, boolean>( state => state.auth.isLoggedIn)
-    const navigate = useNavigate()
-
+    console.log(isLoggedIn)
     const dispatch = useDispatch();
 
     const removeTask = useCallback(function (taskId: string, todolistId: string) {
@@ -61,7 +60,8 @@ export const Todolists = () => {
     }, [])
 
     if(!isLoggedIn) {
-        navigate('/Login')
+        return <Navigate to={'/Login'} />
+
     }
 
     return (
