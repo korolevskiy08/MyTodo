@@ -23,7 +23,7 @@ export const Todolists = () => {
 
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
     const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
-    const isLoggedIn = useSelector<AppRootStateType, boolean>( state => state.auth.isLoggedIn)
+    const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn)
     console.log(isLoggedIn)
     const dispatch = useDispatch();
 
@@ -31,14 +31,19 @@ export const Todolists = () => {
         dispatch(deleteTaskTC({todolistId, taskId}))
     }, []);
     const addTask = useCallback(function (title: string, todolistId: string) {
-        dispatch(addTaskTC(title, todolistId))
+        dispatch(addTaskTC({title, todolistId}))
     }, []);
 
-    const changeStatus = useCallback(function (id: string, status: TaskStatuses, todolistId: string) {
-        dispatch(updateTaskTC(todolistId, id, {status}))
+    const changeStatus = useCallback(function (taskId: string, status: TaskStatuses, todolistId: string) {
+        dispatch(updateTaskTC({
+            todolistId, taskId,
+            model: {
+                status
+            }
+        }))
     }, []);
-    const changeTaskTitle = useCallback(function (id: string, newTitle: string, todolistId: string) {
-        dispatch(updateTaskTC(todolistId, id, {title: newTitle}))
+    const changeTaskTitle = useCallback(function (taskId: string, newTitle: string, todolistId: string) {
+        dispatch(updateTaskTC({todolistId, taskId, model: {title: newTitle} }))
     }, []);
 
     const changeFilter = useCallback(function (value: FilterValuesType, todolistId: string) {
@@ -59,8 +64,8 @@ export const Todolists = () => {
         dispatch(fetchTodolistTC())
     }, [])
 
-    if(!isLoggedIn) {
-        return <Navigate to={'/Login'} />
+    if (!isLoggedIn) {
+        return <Navigate to={'/Login'}/>
 
     }
 

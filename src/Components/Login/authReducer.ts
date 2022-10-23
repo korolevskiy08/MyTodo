@@ -1,5 +1,4 @@
 import {setStatus} from "../App/app-reducer";
-import {AppThunk} from "../../state/store";
 import {authAPI, LoginParamsType} from "../../api/todoapi";
 import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
 import axios from "axios";
@@ -23,39 +22,23 @@ export const loginTC = createAsyncThunk('auth/login', async (data: LoginParamsTy
     }
 })
 
-// export const logoutTC = createAsyncThunk('auth/logout', async (arg, thunkAPI) => {
-//     thunkAPI.dispatch(setStatus({status: 'loading'}))
-//     try {
-//         const res = await authAPI.logout()
-//         if (res.data.resultCode === 0) {
-//             thunkAPI.dispatch(setStatus({status: 'succeeded'}))
-//             return {value: false}
-//         } else {
-//             handleServerAppError(res.data, thunkAPI.dispatch)
-//             return thunkAPI.rejectWithValue({someError: 'some error'})
-//         }
-//     } catch (e) {
-//         if (axios.isAxiosError(e))
-//             handleServerNetworkError(e, thunkAPI.dispatch)
-//         return {value: false}
-//     }
-// })
-
-export const logoutTC = (): AppThunk => async (dispatch) => {
-    dispatch(setStatus({status: 'loading'}))
+export const logoutTC = createAsyncThunk('auth/logout', async (param, thunkAPI) => {
+    thunkAPI.dispatch(setStatus({status: 'loading'}))
     try {
         const res = await authAPI.logout()
         if (res.data.resultCode === 0) {
-            dispatch(setIsLoggedInAC({value: false}))
-            dispatch(setStatus({status: 'succeeded'}))
+            thunkAPI.dispatch(setStatus({status: 'succeeded'}))
+            return
         } else {
-            handleServerAppError(res.data, dispatch)
+            handleServerAppError(res.data, thunkAPI.dispatch)
+            return thunkAPI.rejectWithValue({})
         }
     } catch (e) {
         if (axios.isAxiosError(e))
-            handleServerNetworkError(e, dispatch)
+            handleServerNetworkError(e, thunkAPI.dispatch)
+        return thunkAPI.rejectWithValue({})
     }
-}
+})
 
 const slice = createSlice({
     name: 'auth',
@@ -70,6 +53,9 @@ const slice = createSlice({
     extraReducers: builder => {
         builder.addCase(loginTC.fulfilled, (state, action) => {
             state.isLoggedIn = action.payload.value
+        })
+        builder.addCase(logoutTC.fulfilled, (state, action) => {
+            state.isLoggedIn = false
         })
     }
 })
