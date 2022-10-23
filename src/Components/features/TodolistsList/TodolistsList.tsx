@@ -17,7 +17,7 @@ import {AddItemForm} from "../../AddItemForm/AddItemForm";
 import Paper from "@mui/material/Paper";
 import {Todolist} from "./Todolist/Todolist";
 import {TasksStateType} from "../../App/App";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 export const Todolists = () => {
 
@@ -28,8 +28,8 @@ export const Todolists = () => {
 
     const dispatch = useDispatch();
 
-    const removeTask = useCallback(function (id: string, todolistId: string) {
-        dispatch(deleteTaskTC(todolistId, id))
+    const removeTask = useCallback(function (taskId: string, todolistId: string) {
+        dispatch(deleteTaskTC({todolistId, taskId}))
     }, []);
     const addTask = useCallback(function (title: string, todolistId: string) {
         dispatch(addTaskTC(title, todolistId))
