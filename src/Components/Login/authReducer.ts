@@ -29,6 +29,7 @@ export const loginTC = (data: LoginParamsType):AppThunk => async (dispatch) => {
     try {
         const res = await authAPI.login(data)
         dispatch(setIsLoggedInAC({value: true}))
+
         if(res.data.resultCode !== 0){
             handleServerAppError(res.data, dispatch)
         }

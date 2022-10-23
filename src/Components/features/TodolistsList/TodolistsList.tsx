@@ -17,13 +17,14 @@ import {AddItemForm} from "../../AddItemForm/AddItemForm";
 import Paper from "@mui/material/Paper";
 import {Todolist} from "./Todolist/Todolist";
 import {TasksStateType} from "../../App/App";
-import {Navigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 
 export const Todolists = () => {
 
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
     const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
     const isLoggedIn = useSelector<AppRootStateType, boolean>( state => state.auth.isLoggedIn)
+    const navigate = useNavigate()
 
     const dispatch = useDispatch();
 
@@ -60,7 +61,7 @@ export const Todolists = () => {
     }, [])
 
     if(!isLoggedIn) {
-        return <Navigate to={'/Login'} />
+        navigate('/Login')
     }
 
     return (
