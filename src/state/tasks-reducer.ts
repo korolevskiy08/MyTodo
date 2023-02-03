@@ -25,6 +25,7 @@ export const updateTaskTC = createAsyncThunk('tasks/updateTask', async (params: 
             ...params.model
         })
         try {
+
             if (res.data.resultCode === 0) {
                 dispatch(setStatus({status: 'succeeded'}))
                 return {todolistId: params.todolistId, taskId: params.taskId, task: res.data.data.item}
