@@ -6,12 +6,12 @@ import Button from '@mui/material/Button';
 import {Delete} from '@mui/icons-material';
 import {Task} from './Task/Task'
 import {TaskStatuses, TaskType} from "../../../../api/todoapi";
-import {FilterValuesType} from "../../../../state/todolists-reducer";
+import {FilterValuesType} from "../todolists-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchTaskTC} from "../../../../state/tasks-reducer";
 import {LinearProgress} from "@mui/material";
 import {AppRootStateType} from "../../../../state/store";
 import {StatusType} from "../../../App/app-reducer";
+import {fetchTaskTC} from "../task-actions";
 
 
 type PropsType = {

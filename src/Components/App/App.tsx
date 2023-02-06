@@ -12,11 +12,12 @@ import {Todolists} from "../features/TodolistsList/TodolistsList";
 import {CircularProgress, LinearProgress} from "@mui/material";
 import CustomizedSnackbars from "../ErrorSnackbar/ErrorSnackbar";
 import {useDispatch, useSelector} from "react-redux";
-import {AppRootStateType} from "../../state/store";
-import {initializeAppTC, StatusType} from "./app-reducer";
+import {initializeAppTC} from "./app-reducer";
 import {Navigate, Route, Routes} from "react-router-dom";
-import {Login} from "../Login/Login";
-import {logoutTC} from "../Login/authReducer";
+import {Login} from "../features/Login/Login";
+import {logoutTC} from "../features/Login/authReducer";
+import {selectSelectIsInitialized, selectStatus} from "./app-selectors";
+import {authSelectors} from "../features/Login";
 
 export type TasksStateType = {
     [key: string]: Array<TaskType>
@@ -24,9 +25,9 @@ export type TasksStateType = {
 
 function App() {
 
-    const status = useSelector<AppRootStateType, StatusType>(state => state.app.status)
-    const isInitialized = useSelector<AppRootStateType, boolean>( state => state.app.isInitialized)
-    const isLoggedIn = useSelector<AppRootStateType, boolean>( state => state.auth.isLoggedIn)
+    const status = useSelector(selectStatus)
+    const isInitialized = useSelector(selectSelectIsInitialized)
+    const isLoggedIn = useSelector(authSelectors.selectIsLoggedIn)
     const dispatch = useDispatch()
 
     const logoutHandler = () => {

@@ -1,11 +1,12 @@
-import {TasksActionsType, tasksReducer} from './tasks-reducer';
-import {TodolistsActionsType, todolistsReducer} from './todolists-reducer';
-import {combineReducers} from 'redux';
+import {TasksActionsType, tasksReducer} from '../Components/features/TodolistsList/tasks-reducer';
+import {TodolistsActionsType, todolistsReducer} from '../Components/features/TodolistsList/todolists-reducer';
+import {ActionCreatorsMapObject, bindActionCreators, combineReducers} from 'redux';
 import thunk, {ThunkAction} from "redux-thunk";
 import {AppActionType, appReducer} from "../Components/App/app-reducer";
-import {ActionsAuthType, authReducer} from "../Components/Login/authReducer";
+import {ActionsAuthType, authReducer} from "../Components/features/Login/authReducer";
 import {configureStore} from "@reduxjs/toolkit";
 import {useDispatch} from "react-redux";
+import {useMemo} from "react";
 
 const rootReducer = combineReducers({
     tasks: tasksReducer,
@@ -23,10 +24,22 @@ export const store = configureStore({
 
 export type AppRootStateType = ReturnType<typeof rootReducer>
 export type AppActionsType = TodolistsActionsType | TasksActionsType | AppActionType | ActionsAuthType
+
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppRootStateType, unknown, AppActionsType>
 
-//type AppDispatchType = typeof store.dispatch
-//export const useAppDispatch = () => useDispatch<AppDispatchType>()
-// а это, чтобы можно было в консоли браузера обращаться к store в любой момент
+type AppDispatchType = typeof store.dispatch
+
+const useAppDispatch = () => useDispatch<AppDispatchType>()
+
 // @ts-ignore
 window.store = store;
+
+export function useActions<T extends ActionCreatorsMapObject<any>>(actions: T) {
+    const dispatch = useAppDispatch()
+
+    const boundActions = useMemo(() => {
+        return bindActionCreators(actions, dispatch)
+    }, [])
+
+    return boundActions
+}
