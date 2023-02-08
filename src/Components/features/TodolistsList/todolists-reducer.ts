@@ -3,7 +3,7 @@ import {StatusType} from "../../App/app-reducer";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {addTodolistTC, fetchTodolistsTC, removeTodolistTC, updateTodolist} from "./todolists-actions";
 
-const slice = createSlice({
+export const slice = createSlice({
     name: 'todolists',
     initialState: [] as TodolistDomainType[],
     reducers: {
